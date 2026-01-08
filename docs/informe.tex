@@ -1,0 +1,85 @@
+\documentclass[11pt,a4paper]{article}
+
+% --- Paquetes ---
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{geometry}
+\usepackage{booktabs}
+\usepackage{xcolor}
+\usepackage{caption}
+
+\geometry{margin=2.5cm}
+\hypersetup{colorlinks=true, linkcolor=blue, urlcolor=cyan}
+
+
+\title{
+    \textbf{ Segmentación de clientes para un E-commerce}\\
+    \large Implementación de algoritmo K-Means para una E-commerce
+}
+\author{Kevin Iza \\ \small Proyecto de Aprendizaje no supervisado}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section{Introducción}
+Este informe detalla la creación de un sistema de inteligencia de negocios diseñado para categorizar a los clientes de un e-commerce mediante el análisis de su comportamiento histórico. Se utiliza una arquitectura robusta que combina SQL para la gestión de datos y aprendizaje no supervisado para la generación de conocimiento.
+
+\section{Análisis Exploratorio y Distribución}
+Antes del modelado, se analizaron las métricas RFM (Recency, Frecuency, Monetary). La Figura \ref{fig:distribucion} muestra la distribución de estas variables. Se identificó un alto sesgo hacia la derecha y la presencia de valores atípicos, lo que justificó la aplicación de transformaciones logarítmicas para normalizar los datos y mejorar la convergencia del algoritmo de clustering.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.7\textwidth]{distribucion.png}
+    \caption{Distribución estadística de las métricas RFM originales.}
+    \label{fig:distribucion}
+\end{figure}
+
+\section{Metodología y Validación}
+Se utilizó el algoritmo \textbf{K-Means}. El número óptimo de grupos se validó mediante el \textbf{Método del Codo} (Figura \ref{fig:codo}), seleccionando $K=3$ como el punto de inflexión donde la inercia (SSE) comienza a disminuir de forma marginal.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.55\textwidth]{codo.png}
+    \caption{Validación del número de clusters mediante la suma de errores cuadráticos.}
+    \label{fig:codo}
+\end{figure}
+
+\section{Interpretación de Segmentos}
+La segmentación permitió identificar tres perfiles estratégicos claramente diferenciados (Figura \ref{fig:scatter}):
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.75\textwidth]{clusters_scatter.png}
+    \caption{Visualización de Clusters: Frecuencia vs. Valor Monetario (Escala Logarítmica).}
+    \label{fig:scatter}
+\end{figure}
+
+\begin{itemize}
+    \item \textbf{Cluster 1 (VIP - Verde):} Clientes con alta frecuencia y gasto. Poseen una recencia promedio de solo 13 días, demostrando ser el grupo más leal y rentable.
+    \item \textbf{Cluster 2 (Potencial - Amarillo):} Clientes con actividad moderada. Representan la mayor oportunidad de crecimiento mediante estrategias de \textit{upselling}.
+    \item \textbf{Cluster 0 (En Riesgo - Morado):} Clientes con baja actividad y una recencia superior a 170 días. Requieren campañas urgentes de reactivación.
+\end{itemize}
+
+\begin{table}[htbp]
+\centering
+\begin{tabular}{lrrr}
+\toprule
+\textbf{Perfil de Cliente} & \textbf{Recencia Prom.} & \textbf{Frecuencia Prom.} & \textbf{Monetario Prom.} \\
+\midrule
+VIP & 13.1 días & 261.8 & \$6,523.9 \\
+Potencial & 69.4 días & 66.1 & \$1,169.8 \\
+En Riesgo & 171.3 días & 14.9 & \$294.2 \\
+\bottomrule
+\end{tabular}
+\caption{Resumen estadístico de los segmentos identificados.}
+\end{table}
+
+\section{Consideraciones Éticas y Conclusión}
+El sistema garantiza la \textbf{privacidad} mediante la anonimización de datos y asegura la \textbf{equidad} al basar sus predicciones únicamente en hechos transaccionales, evitando sesgos demográficos. En conclusión, el modelo proporciona una herramienta objetiva para optimizar la retención de clientes y maximizar el valor de vida del consumidor de forma ética.
+
+\end{document}
