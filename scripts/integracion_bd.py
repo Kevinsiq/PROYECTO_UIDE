@@ -39,7 +39,7 @@ def ejecutar_proceso():
         # Guardamos en la base de datos
         df_ventas.to_sql('ventas_pyme', engine, if_exists='replace', index=False)
         
-        print("¡Proceso completado con éxito!")
+        print("Proceso completado")
 
 if __name__ == "__main__":
     ejecutar_proceso()
