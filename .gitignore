@@ -1,6 +1,18 @@
-venv/
-.env
+# Python
 __pycache__/
-*.db
-*.xlsx
-*.csv
+*.py[cod]
+*$py.class
+.venv
+venv/
+ENV/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# LaTeX
+*.aux
+*.log
+*.out
+*.toc
+*.pdf
+*.synctex.gz

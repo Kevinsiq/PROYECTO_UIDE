@@ -5,7 +5,7 @@ from sqlalchemy import create_engine
 # Conexión a SQL
 def conectar_db():
     try:
-        # Creamos el motor de conexión para SQLite
+        # Creamos el motor de conexión para SQL
         engine = create_engine('sqlite:///data/proyecto_pyme.db')
         return engine
     except Exception as e:

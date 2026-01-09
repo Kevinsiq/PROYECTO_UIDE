@@ -9,59 +9,75 @@
 \usepackage{booktabs}
 \usepackage{xcolor}
 \usepackage{caption}
+\usepackage{float}
 
 \geometry{margin=2.5cm}
 \hypersetup{colorlinks=true, linkcolor=blue, urlcolor=cyan}
 
-
 \title{
-    \textbf{ Segmentación de clientes para un E-commerce}\\
-    \large Implementación de algoritmo K-Means para una E-commerce
+    \textbf{Segmentación de clientes para una tienda online}\\
+    \large Proyecto de aprendizaje no supervisado: Implementación del algoritmo K-Means
 }
-\author{Kevin Iza \\ \small Proyecto de Aprendizaje no supervisado}
-\date{\today}
+\author{Kevin Iza}
+\date{} 
 
 \begin{document}
 
 \maketitle
 
 \section{Introducción}
-Este informe detalla la creación de un sistema de inteligencia de negocios diseñado para categorizar a los clientes de un e-commerce mediante el análisis de su comportamiento histórico. Se utiliza una arquitectura robusta que combina SQL para la gestión de datos y aprendizaje no supervisado para la generación de conocimiento.
+Este informe de business intelligence representa como se diseñó la segmentación de clientes a una tienda online mediante el análisis de su comportamiento histórico. Se utiliza una arquitectura que combina SQL para la gestión de datos y aprendizaje no supervisado para la generación de perfiles estratégicos.
 
-\section{Análisis Exploratorio y Distribución}
-Antes del modelado, se analizaron las métricas RFM (Recency, Frecuency, Monetary). La Figura \ref{fig:distribucion} muestra la distribución de estas variables. Se identificó un alto sesgo hacia la derecha y la presencia de valores atípicos, lo que justificó la aplicación de transformaciones logarítmicas para normalizar los datos y mejorar la convergencia del algoritmo de clustering.
+\section{Metodología}
+El proyecto se desarrolló siguiendo un flujo de trabajo de ingeniería de datos y ciencia de datos estructurado en cuatro fases:
 
-\begin{figure}[htbp]
+\begin{enumerate}
+    \item \textbf{Fase 1: Extracción de Datos:} Se extrajo el conjunto de datos crudo desde una plataforma de datos abierta. Los registros incluyen el histórico de transacciones, descripciones de productos y fechas.
+    \item \textbf{Fase 2: Arquitectura SQL:} Se implementó una base de datos SQL local para el almacenamiento y estructuración de la información. Se transformaron los registros transaccionales en una tabla de entidades de cliente basada en el modelo \textbf{RFM} (Recency, Frequency, Monetary).
+    \item \textbf{Fase 3: Preprocesamiento de datos:} Para garantizar la convergencia del algoritmo, se aplicó una transformación logarítmica para suvizar el efecto de la asimetría y un normalización (Z-score), asegurando que cada variable contribuya equitativamente a la distancia euclidiana.
+    \item \textbf{Fase 4:Validación del Modelo:} Se utilizó el algoritmo \textbf{K-Means}. El número de clusters se validó mediante el método del Codo, seleccionando $K=3$ como el punto óptimo donde la inercia intracluster se estabiliza.
+\end{enumerate}
+
+
+
+\section{Análisis de la distribución de los datos}
+
+\subsection{Exploración inicial}
+Antes de proceder con el modelo, se realizó un análisis exploratorio de datos (EDA). Como se observa en la Figura \ref{fig:distribucion}, los datos originales presentan una fuerte asimetría positiva. En el contexto comercial, esto indica que la mayoría de los clientes realizan compras pequeñas, mientras que una minoría representa una parte significativa de los ingresos de la tienda.
+
+\begin{figure}[H]
     \centering
     \includegraphics[width=0.7\textwidth]{distribucion.png}
-    \caption{Distribución estadística de las métricas RFM originales.}
+    \caption{Boxplot de las métricas RFM originales: identificación de valores atípicos.}
     \label{fig:distribucion}
 \end{figure}
 
-\section{Metodología y Validación}
-Se utilizó el algoritmo \textbf{K-Means}. El número óptimo de grupos se validó mediante el \textbf{Método del Codo} (Figura \ref{fig:codo}), seleccionando $K=3$ como el punto de inflexión donde la inercia (SSE) comienza a disminuir de forma marginal.
+\subsection{Optimización del hiperparámetro K}
+La selección del número de clusters se basó en la Figura \ref{fig:codo}. En la gráfica se identificó 3 clusters, suficiente para mantener la interpretabilidad estadística y operativa.
 
-\begin{figure}[htbp]
+
+
+\begin{figure}[H]
     \centering
     \includegraphics[width=0.55\textwidth]{codo.png}
-    \caption{Validación del número de clusters mediante la suma de errores cuadráticos.}
+    \caption{Método del Codo.}
     \label{fig:codo}
 \end{figure}
 
-\section{Interpretación de Segmentos}
-La segmentación permitió identificar tres perfiles estratégicos claramente diferenciados (Figura \ref{fig:scatter}):
+\section{Interpretación de segmentos}
+La segmentación permitió identificar tres grupos claramente diferenciados (Figura \ref{fig:scatter}):
 
-\begin{figure}[htbp]
+\begin{figure}[H]
     \centering
     \includegraphics[width=0.75\textwidth]{clusters_scatter.png}
-    \caption{Visualización de Clusters: Frecuencia vs. Valor Monetario (Escala Logarítmica).}
+    \caption{Visualización de clusters (Escala Logarítmica).}
     \label{fig:scatter}
 \end{figure}
 
 \begin{itemize}
-    \item \textbf{Cluster 1 (VIP - Verde):} Clientes con alta frecuencia y gasto. Poseen una recencia promedio de solo 13 días, demostrando ser el grupo más leal y rentable.
-    \item \textbf{Cluster 2 (Potencial - Amarillo):} Clientes con actividad moderada. Representan la mayor oportunidad de crecimiento mediante estrategias de \textit{upselling}.
-    \item \textbf{Cluster 0 (En Riesgo - Morado):} Clientes con baja actividad y una recencia superior a 170 días. Requieren campañas urgentes de reactivación.
+    \item \textbf{Cluster 1 (VIP):} Clientes de alto valor con una recencia promedio de 13 días.
+    \item \textbf{Cluster 2 (Potencial):} Clientes con actividad moderada.
+    \item \textbf{Cluster 0 (Ocasional):} Clientes con baja actividad y alta recencia ($>170$ días).
 \end{itemize}
 
 \begin{table}[htbp]
@@ -72,13 +88,32 @@ La segmentación permitió identificar tres perfiles estratégicos claramente di
 \midrule
 VIP & 13.1 días & 261.8 & \$6,523.9 \\
 Potencial & 69.4 días & 66.1 & \$1,169.8 \\
-En Riesgo & 171.3 días & 14.9 & \$294.2 \\
+Ocasional & 171.3 días & 14.9 & \$294.2 \\
 \bottomrule
 \end{tabular}
-\caption{Resumen estadístico de los segmentos identificados.}
+\caption{Resumen estadístico de los clusters identificados.}
 \end{table}
 
+\section{Aplicaciones estratégicas y recomendaciones}
+
+El valor fundamental de este informe radica en la capacidad de convertir los segmentos identificados en acciones comerciales concretas. A continuación, se detallan las estrategias recomendadas:
+
+\subsection{Estrategias de marketing y ventas}
+\begin{itemize}
+    \item \textbf{Fidelización VIP (Cluster 1):} Implementar un programa de recompensas exclusivas o acceso anticipado a nuevos productos. El objetivo es mantener su baja recencia y premiar su lealtad para evitar que migren a la competencia.
+    \item \textbf{Desarrollo de Clientes Potenciales (Cluster 2):} Utilizar técnicas de Cross-selling y Upselling. Al tener una actividad moderada, estos clientes responden bien a recomendaciones personalizadas basadas en sus compras anteriores.
+    \item \textbf{Reactivación de Ocasionales (Cluster 0):} Ejecutar campañas de Win-back mediante cupones de descuento agresivos o encuestas de satisfacción para entender por qué dejaron de comprar.
+\end{itemize}
+
+\subsection{Escalabilidad del modelo}
+Este marco de trabajo no se limita exclusivamente a una tienda online de retail; su arquitectura permite replicarlo en diversos sectores:
+\begin{itemize}
+    \item \textbf{Sector Bancario:} Segmentación de usuarios según el uso de tarjetas de crédito.
+    \item \textbf{SaaS y Suscripciones:} Análisis de usuarios basado en la frecuencia de uso de la plataforma y el nivel del plan contratado.
+    \item \textbf{Empresas:} Clasificación de proveedores o clientes corporativos según el volumen de facturación y puntualidad.
+\end{itemize}
+
 \section{Consideraciones Éticas y Conclusión}
-El sistema garantiza la \textbf{privacidad} mediante la anonimización de datos y asegura la \textbf{equidad} al basar sus predicciones únicamente en hechos transaccionales, evitando sesgos demográficos. En conclusión, el modelo proporciona una herramienta objetiva para optimizar la retención de clientes y maximizar el valor de vida del consumidor de forma ética.
+El sistema garantiza la \textbf{privacidad} mediante la anonimización de datos y asegura la \textbf{equidad} al basar sus predicciones únicamente en hechos transaccionales. En conclusión, el modelo proporciona una herramienta objetiva para optimizar la retención de clientes y maximizar el valor de vida del consumidor de forma ética y basada en evidencia científica.
 
 \end{document}
